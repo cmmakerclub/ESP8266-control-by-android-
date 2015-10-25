@@ -3,17 +3,17 @@
 #include <ESP8266WebServer.h>
 
 /* Set these to your desired credentials. */
-const char *ssid = "ESPTestAP";
+const char *ssid = "ESP8266CarByCmmc";
 const char *password = "1234567890";
 
 char packetBuffer[1500]; //buffer to hold incoming packet
 int count = 0;
 
-int vaules = 0;
+float vaules = 0;
 float vaulesR = 0;
 float vaulesL = 0;
 
-int x, y, z, iy;
+float x, y, z, iy;
 //
 unsigned long timeStar, timeEnd;
 boolean readStar = true;
@@ -138,15 +138,15 @@ void loop() {
       //do go forward if x<0
       if (x <= -1) {
 
-        vaules = map(abs(x), 0, 5, 0, 1024);
-        if (vaules > 1024) {
-          vaules = 1024;
+        vaules = map(abs(x), 0, 5, 0, 1023);
+        if (vaules > 1023) {
+          vaules = 1023;
         }
         // vaules = vaules*200;
         //
-        iy = map(abs(y), 0, 5, 0, 1024);
-        if (iy > 1024) {
-          iy = 1024;
+        iy = map(abs(y), 0, 5, 0, 1023);
+        if (iy > 1023) {
+          iy = 1023;
         }
         //
 
@@ -159,33 +159,35 @@ void loop() {
         if (y <= 1) // trun R  low valueR
         {
           vaulesL = vaulesL - iy;
+        
 
         }
 
         if (y >= -1) // trun L  low valueL
         {
           vaulesR = vaulesR - iy;
+        
 
         }
-        analogWrite(12, 0); // IN1  F //L
-        analogWrite(13, 1024); // IN2    //L
-        analogWrite(14, 0); // IN3 F// R
-        analogWrite(16, 1024); // IN4    //R
+        analogWrite(12, 1023); // IN1  F //L
+        analogWrite(13, 0); // IN2    //L
+        analogWrite(14, 1023); // IN3 F// R
+        analogWrite(16, 0); // IN4    //R
         //fix bug
         if (vaulesR <= 1) {
           vaulesR = 0;
         }
 
-        if (vaulesR >= 1024) {
-          vaulesR = 1024;
+        if (vaulesR >= 1023) {
+          vaulesR = 1023;
         }
 
         if (vaulesL <= 1) {
           vaulesL = 0;
         }
 
-        if (vaulesL >= 1024) {
-          vaulesL = 1024;
+        if (vaulesL >= 1023) {
+          vaulesL = 1023;
         }
         //end fix bug
 
@@ -197,14 +199,14 @@ void loop() {
       if (x >= 1)
       {
         vaules = map(abs(x), 0, 5, 0, 1024);
-        if (vaules > 1024) {
-          vaules = 1024;
+        if (vaules > 1023) {
+          vaules = 1023;
         }
         // vaules = vaules*200;
         //
-        iy = map(abs(y), 0, 5, 0, 1024);
-        if (iy > 1024) {
-          iy = 1024;
+        iy = map(abs(y), 0, 5, 0, 1023);
+        if (iy > 1023) {
+          iy = 1023;
         }
         //
         vaulesR = vaules;
@@ -215,31 +217,33 @@ void loop() {
         if (y <= 1) // trun R  low valueR
         {
           vaulesL = vaulesL - iy;
+          
         }
 
         if (y >= -1) // trun L  low valueL
         {
           vaulesR = vaulesR - iy;
+          
         }
-        analogWrite(12, 1024); // IN1   //L
-        analogWrite(13, 0); // IN2  B  //L
-        analogWrite(14, 1024); // IN3 // R
-        analogWrite(16, 0); // IN4   B //R
+        analogWrite(12, 0); // IN1   //L
+        analogWrite(13, 1023); // IN2  B  //L
+        analogWrite(14, 0); // IN3 // R
+        analogWrite(16, 1023); // IN4   B //R
         //fix bug
         if (vaulesR <= 1) {
           vaulesR = 0;
         }
 
-        if (vaulesR >= 1024) {
-          vaulesR = 1024;
+        if (vaulesR >= 1023) {
+          vaulesR = 1023;
         }
 
         if (vaulesL <= 1) {
           vaulesL = 0;
         }
 
-        if (vaulesL > 1024) {
-          vaulesL = 1024;
+        if (vaulesL > 1023) {
+          vaulesL = 1023;
         }
         //end fix bug
         analogWrite(4, vaulesR); // ENA(IN1)
@@ -247,7 +251,54 @@ void loop() {
       }//end back ward
 
       //
+       if (x > -1 && x < 1 ){
+        //
+        vaules = map(abs(x), 0, 5, 0, 1023);
+        if (vaules > 1023) {
+          vaules = 1023;
+        }
+        // vaules = vaules*200;
+        //
+        iy = map(abs(y), 0, 5, 0, 1023);
+        if (iy > 1023) {
+          iy = 1023;
+        }
+        //
+        vaulesR = vaules;
+        vaulesL = vaules;
+            // check y for trun
+        if (y <= 1) // trun R  low valueR
+        {
+       
+            vaulesR = iy;
+          
+        }
 
+        if (y >= -1) // trun L  low valueL
+        {
+          
+         
+            vaulesL = iy;
+          
+        
+       }
+       analogWrite(12, 1023); // IN1  F //L
+        analogWrite(13, 0); // IN2    //L
+        analogWrite(14, 1023); // IN3 F// R
+        analogWrite(16, 0); // IN4    //R
+
+        //end fix bug
+        analogWrite(4, vaulesR); // ENA(IN1)
+        analogWrite(5, vaulesL); // ENB(IN3)
+       }
+        //show data
+      Serial.print("vaules :");
+      Serial.println(vaules);
+      Serial.print("vaulesL :");
+      Serial.println(vaulesL);
+      Serial.print("vaulesR :");
+      Serial.println(vaulesR);
+      //drive motor L - R
       //
       // int i  = b.toInt();
       // i = abs(i);
